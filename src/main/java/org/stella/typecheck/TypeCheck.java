@@ -1,13 +1,13 @@
 package org.stella.typecheck;
 
-import org.syntax.stella.Absyn.*;
-import org.stella.typecheck.VisitTypeCheck;
+import org.syntax.stella.Absyn.Program;
 
 public class TypeCheck
 {
-    public static void typecheckProgram(Program program) throws Exception
+    public static void typecheckProgram(Program program)
     {
-        VisitTypeCheck v = new VisitTypeCheck();
-        program.accept(v.new ProgramVisitor<>(), null /* initial context information*/);
+        var visitors = new VisitTypeCheck();
+        var visitor = visitors.new ProgramVisitor();
+        program.accept(visitor, new Context());
     }
 }
