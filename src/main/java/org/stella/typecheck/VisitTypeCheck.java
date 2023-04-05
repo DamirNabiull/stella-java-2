@@ -6,6 +6,9 @@ import org.stella.helpers.SupportedExtensions;
 import org.stella.typecheck.defined.*;
 import org.stella.utils.ExceptionsUtils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class VisitTypeCheck
 {
     public class ProgramVisitor implements org.syntax.stella.Absyn.Program.Visitor<DefinedType,Context>
@@ -43,7 +46,7 @@ public class VisitTypeCheck
     {
         public DefinedType visit(org.syntax.stella.Absyn.DeclFun p, Context arg)
         { /* Code for DeclFun goes here */
-            DefinedType funcType = new FunDefined();
+            DefinedType funType = new FunDefined();
             Context context = new Context(arg);
 
             for (org.syntax.stella.Absyn.Annotation x: p.listannotation_) {
@@ -51,9 +54,9 @@ public class VisitTypeCheck
             }
             //p.stellaident_;
             for (org.syntax.stella.Absyn.ParamDecl x: p.listparamdecl_) {
-                funcType.args = x.accept(new ParamDeclVisitor(), context);
+                funType.args.add(x.accept(new ParamDeclVisitor(), context));
             }
-            funcType.result = p.returntype_.accept(new ReturnTypeVisitor(), context);
+            funType.result = p.returntype_.accept(new ReturnTypeVisitor(), context);
             p.throwtype_.accept(new ThrowTypeVisitor(), context);
             for (org.syntax.stella.Absyn.Decl x: p.listdecl_) {
                 x.accept(new DeclVisitor(), context);
@@ -65,12 +68,12 @@ public class VisitTypeCheck
             // Clear context
             arg.LocalDefinitions.clear();
 
-            funcType.result.equals(body, "FunDecl [" + p.stellaident_ + "]");
+            funType.result.equals(body, "FunDecl [" + p.stellaident_ + "]");
 
-            //Add func to global definitions
-            arg.GlobalDefinitions.put(p.stellaident_, funcType);
+            //Add fun to global definitions
+            arg.GlobalDefinitions.put(p.stellaident_, funType);
 
-            return funcType;
+            return funType;
         }
         public DefinedType visit(org.syntax.stella.Absyn.DeclTypeAlias p, Context arg)
         { /* Code for DeclTypeAlias goes here */
@@ -98,8 +101,6 @@ public class VisitTypeCheck
     {
         public DefinedType visit(org.syntax.stella.Absyn.AParamDecl p, Context arg)
         { /* Code for AParamDecl goes here */
-//            System.out.println("ParamDeclVisitor");
-            //p.stellaident_;
             var param = p.type_.accept(new TypeVisitor(), arg);
             arg.LocalDefinitions.put(p.stellaident_, param);
             return param;
@@ -140,14 +141,14 @@ public class VisitTypeCheck
     {
         public DefinedType visit(org.syntax.stella.Absyn.TypeFun p, Context arg)
         { /* Code for TypeFun goes here */
-            DefinedType argsType = null, returnType;
+            DefinedType funType = new FunDefined();
 
             for (org.syntax.stella.Absyn.Type x: p.listtype_) {
-                argsType = x.accept(new TypeVisitor(), arg);
+                funType.args.add(x.accept(new TypeVisitor(), arg));
             }
-            returnType = p.type_.accept(new TypeVisitor(), arg);
+            funType.result = p.type_.accept(new TypeVisitor(), arg);
 
-            return new FunDefined(argsType, returnType);
+            return funType;
         }
         public DefinedType visit(org.syntax.stella.Absyn.TypeRec p, Context arg)
         { /* Code for TypeRec goes here */
@@ -422,15 +423,15 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.Abstraction p, Context arg)
         { /* Code for Abstraction goes here */
-            var abstractFunc = new FunDefined();
+            DefinedType abstractFun = new FunDefined();
             Context context = new Context(arg);
 
             for (org.syntax.stella.Absyn.ParamDecl x: p.listparamdecl_) {
-                abstractFunc.args = x.accept(new ParamDeclVisitor(), context);
+                abstractFun.args.add(x.accept(new ParamDeclVisitor(), context));
             }
-            abstractFunc.result = p.expr_.accept(new ExprVisitor(), context);
+            abstractFun.result = p.expr_.accept(new ExprVisitor(), context);
 
-            return abstractFunc;
+            return abstractFun;
         }
         public DefinedType visit(org.syntax.stella.Absyn.Variant p, Context arg)
         { /* Code for Variant goes here */
@@ -491,16 +492,15 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.Application p, Context arg)
         { /* Code for Application goes here */
-            DefinedType funType, argType = null;
-            funType = p.expr_.accept(new ExprVisitor(), arg);
+            List<DefinedType> argType = new ArrayList<>();
+            DefinedType funType = p.expr_.accept(new ExprVisitor(), arg);
             for (org.syntax.stella.Absyn.Expr x: p.listexpr_) {
-                argType = x.accept(new ExprVisitor(), arg);
+                argType.add(x.accept(new ExprVisitor(), arg));
             }
 
-            if (funType.type == TypesEnum.Fun && funType.args.equals(argType, "Application"))
+            if (Checker.CheckApplication(funType, argType))
                 return funType.result;
 
-            ExceptionsUtils.throwTypeException("Application", "Fun", funType.type.name());
             return null;
         }
         public DefinedType visit(org.syntax.stella.Absyn.DotRecord p, Context arg)
@@ -605,10 +605,9 @@ public class VisitTypeCheck
             var t2 = p.expr_2.accept(new ExprVisitor(), arg);
             var t3 = p.expr_3.accept(new ExprVisitor(), arg);
 
-            if (t1.type == TypesEnum.Nat && Checker.CheckNatRecFunParam(t2, t3))
+            if (Checker.CheckNatRecFunParam(t1, t2, t3))
                 return t2;
 
-            ExceptionsUtils.throwTypeException("NatRec [T1]", "Nat", t1.type.name());
             return null;
         }
         public DefinedType visit(org.syntax.stella.Absyn.Fold p, Context arg)

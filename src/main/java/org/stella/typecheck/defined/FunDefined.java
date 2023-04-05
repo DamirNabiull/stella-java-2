@@ -5,10 +5,6 @@ public class FunDefined extends DefinedType {
         super(TypesEnum.Fun);
     }
 
-    public FunDefined(DefinedType a, DefinedType r) {
-        super(TypesEnum.Fun, a, r);
-    }
-
     @Override
     public String toString() {
         return GetArgsAndReturns(this, 0);
@@ -20,19 +16,28 @@ public class FunDefined extends DefinedType {
     }
 
     private String GetArgsAndReturns(DefinedType t, int k){
-        String ans = "";
+        StringBuilder ans = new StringBuilder();
 
         if (t.type == TypesEnum.Fun) {
-            ans += "\t".repeat(k) + "FUN\n";
-            ans += "\t".repeat(k + 1) + "{ARGS}\n" + GetArgsAndReturns(t.args, k+1);
-            ans += "\n" + "\t".repeat(k + 1) + "{RETURN}\n" + GetArgsAndReturns(t.result, k+1);
+            ans.append("\t".repeat(k))
+                    .append("FUN\n");
+            ans.append("\t".repeat(k + 1))
+                    .append("{ARGS}\n");
+
+            for (int i = 0; i < t.args.size(); i++)
+                ans.append(GetArgsAndReturns(t.args.get(i), k + 1));
+
+            ans.append("\n")
+                    .append("\t".repeat(k + 1))
+                    .append("{RETURN}\n")
+                    .append(GetArgsAndReturns(t.result, k + 1));
         } else {
-            ans += t.toString(k);
+            ans.append(t.toString(k));
         }
 
         if (k > 0)
-            ans += "\n";
+            ans.append("\n");
 
-        return ans;
+        return ans.toString();
     }
 }
