@@ -197,8 +197,7 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.TypeUnit p, Context arg)
         { /* Code for TypeUnit goes here */
-            System.out.println("TypeUnit");
-            return null;
+            return new UnitDefined();
         }
         public DefinedType visit(org.syntax.stella.Absyn.TypeVar p, Context arg)
         { /* Code for TypeVar goes here */
@@ -634,8 +633,7 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.ConstUnit p, Context arg)
         { /* Code for ConstUnit goes here */
-            System.out.println("ConstUnit");
-            return null;
+            return new UnitDefined();
         }
         public DefinedType visit(org.syntax.stella.Absyn.ConstInt p, Context arg)
         { /* Code for ConstInt goes here */

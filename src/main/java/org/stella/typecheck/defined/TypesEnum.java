@@ -3,5 +3,7 @@ package org.stella.typecheck.defined;
 public enum TypesEnum {
     Nat,
     Bool,
-    Fun
+    Fun,
+    Unit,
+    Tuple
 }
