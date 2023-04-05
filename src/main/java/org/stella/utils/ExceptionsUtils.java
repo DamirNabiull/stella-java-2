@@ -27,6 +27,10 @@ public class ExceptionsUtils {
     public static void throwOutOfRangeException(String message, int expected, int given){
         throwException(new OutOfRangeException(message, expected, given));
     }
+
+    public static void throwUnexpectedSizeException(String message, int expected, int given){
+        throwException(new UnexpectedSizeException(message, expected, given));
+    }
 }
 
 class IncorrectTypeException extends RuntimeException {
@@ -49,6 +53,12 @@ class UnsupportedExtensionException extends RuntimeException {
 
 class OutOfRangeException extends RuntimeException {
     public OutOfRangeException(String context, int size, int given) {
-        super("\n\nOUT_OF_RANGE:\n" + context + "\n\nSize:\n" + size + "\n\nBut got:\n" + given + "\n\n");
+        super("\n\nOUT_OF_RANGE_ERROR:\n" + context + "\n\nCurrent size:\n" + size + "\n\nBut got:\n" + given + "\n\n");
+    }
+}
+
+class UnexpectedSizeException extends RuntimeException {
+    public UnexpectedSizeException(String context, int size, int given) {
+        super("\n\nUNEXPECTED_SIZE_ERROR:\n" + context + "\n\nCurrent size:\n" + size + "\n\nBut got:\n" + given + "\n\n");
     }
 }

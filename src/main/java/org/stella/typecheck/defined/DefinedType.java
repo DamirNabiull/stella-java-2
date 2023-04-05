@@ -66,7 +66,7 @@ public class DefinedType {
             return argsResult;
         }
 
-        ExceptionsUtils.throwTypeException(context, String.format("Args number: %d", a.size()), String.format("Args number: %d", b.size()));
+        ExceptionsUtils.throwUnexpectedSizeException(context, a.size(), b.size());
 
         return false;
     }

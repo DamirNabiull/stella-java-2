@@ -63,8 +63,6 @@ public class VisitTypeCheck
             }
             var body = p.expr_.accept(new ExprVisitor(), context);
 
-//            System.out.println(context);
-
             // Clear context
             arg.LocalDefinitions.clear();
 
@@ -114,7 +112,6 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.SomeReturnType p, Context arg)
         { /* Code for SomeReturnType goes here */
-//            System.out.println("SomeReturnTypeVisitor");
             var returnType = p.type_.accept(new TypeVisitor(), arg);
 
             if (returnType == null)
@@ -164,10 +161,11 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.TypeTuple p, Context arg)
         { /* Code for TypeTuple goes here */
+            TupleDefined tupleType = new TupleDefined();
             for (org.syntax.stella.Absyn.Type x: p.listtype_) {
-                x.accept(new TypeVisitor(), arg);
+                tupleType.args.add(x.accept(new TypeVisitor(), arg));
             }
-            return null;
+            return tupleType;
         }
         public DefinedType visit(org.syntax.stella.Absyn.TypeRecord p, Context arg)
         { /* Code for TypeRecord goes here */
@@ -511,16 +509,21 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.DotTuple p, Context arg)
         { /* Code for DotTuple goes here */
-            p.expr_.accept(new ExprVisitor(), arg);
-            //p.integer_;
+            var tupleType = p.expr_.accept(new ExprVisitor(), arg);
+
+            if (1 <= p.integer_ && p.integer_ <= tupleType.args.size())
+                return tupleType.args.get(p.integer_ - 1);
+
+            ExceptionsUtils.throwOutOfRangeException("Tuple", tupleType.args.size(), p.integer_);
             return null;
         }
         public DefinedType visit(org.syntax.stella.Absyn.Tuple p, Context arg)
         { /* Code for Tuple goes here */
+            TupleDefined tupleType = new TupleDefined();
             for (org.syntax.stella.Absyn.Expr x: p.listexpr_) {
-                x.accept(new ExprVisitor(), arg);
+                tupleType.args.add(x.accept(new ExprVisitor(), arg));
             }
-            return null;
+            return tupleType;
         }
         public DefinedType visit(org.syntax.stella.Absyn.Record p, Context arg)
         { /* Code for Record goes here */
