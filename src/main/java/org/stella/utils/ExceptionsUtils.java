@@ -23,6 +23,10 @@ public class ExceptionsUtils {
     public static void throwExtensionException(String message) {
         throwException(new UnsupportedExtensionException(message));
     }
+
+    public static void throwOutOfRangeException(String message, int expected, int given){
+        throwException(new OutOfRangeException(message, expected, given));
+    }
 }
 
 class IncorrectTypeException extends RuntimeException {
@@ -40,5 +44,11 @@ class UndefinedVariableException extends RuntimeException {
 class UnsupportedExtensionException extends RuntimeException {
     public UnsupportedExtensionException(String extensionName) {
         super("\n\nUNSUPPORTED_EXTENSION_ERROR:\n" + extensionName + "\n");
+    }
+}
+
+class OutOfRangeException extends RuntimeException {
+    public OutOfRangeException(String context, int size, int given) {
+        super("\n\nOUT_OF_RANGE:\n" + context + "\n\nSize:\n" + size + "\n\nBut got:\n" + given + "\n\n");
     }
 }

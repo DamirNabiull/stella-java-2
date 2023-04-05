@@ -7,7 +7,8 @@ import java.util.List;
 public class SupportedExtensions {
     private static final List<String> SupportedExtensionsList = List.of(
             "#unit-type",
-            "#pairs"
+            "#pairs",
+            "#tuples"
     );
 
     public static void Support(String extensionName){
