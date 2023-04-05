@@ -3,8 +3,7 @@
 package org.stella.typecheck;
 
 import org.stella.helpers.SupportedExtensions;
-import org.stella.typecheck.defined.DefinedType;
-import org.stella.typecheck.defined.TypesEnum;
+import org.stella.typecheck.defined.*;
 import org.stella.utils.ExceptionsUtils;
 
 public class VisitTypeCheck
@@ -44,9 +43,7 @@ public class VisitTypeCheck
     {
         public DefinedType visit(org.syntax.stella.Absyn.DeclFun p, Context arg)
         { /* Code for DeclFun goes here */
-//            System.out.println("\nFun - DeclVisitor " + p.stellaident_);
-
-            DefinedType funcType = new DefinedType(TypesEnum.Fun);
+            DefinedType funcType = new FunDefined();
             Context context = new Context(arg);
 
             for (org.syntax.stella.Absyn.Annotation x: p.listannotation_) {
@@ -54,7 +51,7 @@ public class VisitTypeCheck
             }
             //p.stellaident_;
             for (org.syntax.stella.Absyn.ParamDecl x: p.listparamdecl_) {
-                funcType.arg = x.accept(new ParamDeclVisitor(), context);
+                funcType.args = x.accept(new ParamDeclVisitor(), context);
             }
             funcType.result = p.returntype_.accept(new ReturnTypeVisitor(), context);
             p.throwtype_.accept(new ThrowTypeVisitor(), context);
@@ -150,7 +147,7 @@ public class VisitTypeCheck
             }
             returnType = p.type_.accept(new TypeVisitor(), arg);
 
-            return new DefinedType(TypesEnum.Fun, argsType, returnType);
+            return new FunDefined(argsType, returnType);
         }
         public DefinedType visit(org.syntax.stella.Absyn.TypeRec p, Context arg)
         { /* Code for TypeRec goes here */
@@ -192,14 +189,15 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.TypeBool p, Context arg)
         { /* Code for TypeBool goes here */
-            return new DefinedType(TypesEnum.Bool);
+            return new BoolDefined();
         }
         public DefinedType visit(org.syntax.stella.Absyn.TypeNat p, Context arg)
         { /* Code for TypeNat goes here */
-            return new DefinedType(TypesEnum.Nat);
+            return new NatDefined();
         }
         public DefinedType visit(org.syntax.stella.Absyn.TypeUnit p, Context arg)
         { /* Code for TypeUnit goes here */
+            System.out.println("TypeUnit");
             return null;
         }
         public DefinedType visit(org.syntax.stella.Absyn.TypeVar p, Context arg)
@@ -308,6 +306,7 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.PatternUnit p, Context arg)
         { /* Code for PatternUnit goes here */
+            System.out.println("PatternUnit");
             return null;
         }
         public DefinedType visit(org.syntax.stella.Absyn.PatternInt p, Context arg)
@@ -424,11 +423,11 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.Abstraction p, Context arg)
         { /* Code for Abstraction goes here */
-            var abstractFunc = new DefinedType(TypesEnum.Fun);
+            var abstractFunc = new FunDefined();
             Context context = new Context(arg);
 
             for (org.syntax.stella.Absyn.ParamDecl x: p.listparamdecl_) {
-                abstractFunc.arg = x.accept(new ParamDeclVisitor(), context);
+                abstractFunc.args = x.accept(new ParamDeclVisitor(), context);
             }
             abstractFunc.result = p.expr_.accept(new ExprVisitor(), context);
 
@@ -499,7 +498,7 @@ public class VisitTypeCheck
                 argType = x.accept(new ExprVisitor(), arg);
             }
 
-            if (funType.type == TypesEnum.Fun && funType.arg.equals(argType, "Application"))
+            if (funType.type == TypesEnum.Fun && funType.args.equals(argType, "Application"))
                 return funType.result;
 
             ExceptionsUtils.throwTypeException("Application", "Fun", funType.type.name());
@@ -607,7 +606,7 @@ public class VisitTypeCheck
             var t2 = p.expr_2.accept(new ExprVisitor(), arg);
             var t3 = p.expr_3.accept(new ExprVisitor(), arg);
 
-            if (t1.type == TypesEnum.Nat && t2.CheckNatRecFunParam(t3))
+            if (t1.type == TypesEnum.Nat && Checker.CheckNatRecFunParam(t2, t3))
                 return t2;
 
             ExceptionsUtils.throwTypeException("NatRec [T1]", "Nat", t1.type.name());
@@ -627,20 +626,21 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.ConstTrue p, Context arg)
         { /* Code for ConstTrue goes here */
-            return new DefinedType(TypesEnum.Bool);
+            return new BoolDefined();
         }
         public DefinedType visit(org.syntax.stella.Absyn.ConstFalse p, Context arg)
         { /* Code for ConstFalse goes here */
-            return new DefinedType(TypesEnum.Bool);
+            return new BoolDefined();
         }
         public DefinedType visit(org.syntax.stella.Absyn.ConstUnit p, Context arg)
         { /* Code for ConstUnit goes here */
+            System.out.println("ConstUnit");
             return null;
         }
         public DefinedType visit(org.syntax.stella.Absyn.ConstInt p, Context arg)
         { /* Code for ConstInt goes here */
             if (p.integer_ == 0)
-                return new DefinedType(TypesEnum.Nat);
+                return new NatDefined();
 
             ExceptionsUtils.throwTypeException("ConstInt", "value == 0", "value != 0");
             return null;
