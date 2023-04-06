@@ -10,10 +10,13 @@ public class Context {
 
     public HashMap<String, DefinedType> LocalDefinitions;
 
+    public DefinedType MatchType;
+
     public Context()
     {
         GlobalDefinitions = new HashMap<>();
         LocalDefinitions = new HashMap<>();
+        MatchType = null;
     }
 
     public Context(Context context)
@@ -22,14 +25,27 @@ public class Context {
         GlobalDefinitions.putAll(context.LocalDefinitions);
 
         LocalDefinitions = new HashMap<>();
+        MatchType = context.MatchType;
     }
 
-    public DefinedType LookUp(String name) {
-        if (GlobalDefinitions.containsKey(name))
-            return GlobalDefinitions.get(name);
+    public void addLocal(String key, DefinedType value) {
+        LocalDefinitions.put(key, value);
+    }
 
+    public void clearLocal(){
+        LocalDefinitions.clear();
+    }
+
+    public void addGlobal(String key, DefinedType value) {
+        GlobalDefinitions.put(key, value);
+    }
+
+    public DefinedType lookUp(String name) {
         if (LocalDefinitions.containsKey(name))
             return LocalDefinitions.get(name);
+
+        if (GlobalDefinitions.containsKey(name))
+            return GlobalDefinitions.get(name);
 
         ExceptionsUtils.throwUndefinedException(name);
         return null;

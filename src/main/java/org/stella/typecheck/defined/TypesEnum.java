@@ -5,5 +5,6 @@ public enum TypesEnum {
     Bool,
     Fun,
     Unit,
-    Tuple
+    Tuple,
+    Sum
 }

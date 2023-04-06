@@ -64,12 +64,12 @@ public class VisitTypeCheck
             var body = p.expr_.accept(new ExprVisitor(), context);
 
             // Clear context
-            arg.LocalDefinitions.clear();
+            arg.clearLocal();
 
             funType.result.equals(body, "FunDecl [" + p.stellaident_ + "]");
 
             //Add fun to global definitions
-            arg.GlobalDefinitions.put(p.stellaident_, funType);
+            arg.addGlobal(p.stellaident_, funType);
 
             return funType;
         }
@@ -100,7 +100,7 @@ public class VisitTypeCheck
         public DefinedType visit(org.syntax.stella.Absyn.AParamDecl p, Context arg)
         { /* Code for AParamDecl goes here */
             var param = p.type_.accept(new TypeVisitor(), arg);
-            arg.LocalDefinitions.put(p.stellaident_, param);
+            arg.addLocal(p.stellaident_, param);
             return param;
         }
     }
@@ -155,9 +155,10 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.TypeSum p, Context arg)
         { /* Code for TypeSum goes here */
-            p.type_1.accept(new TypeVisitor(), arg);
-            p.type_2.accept(new TypeVisitor(), arg);
-            return null;
+            SumDefined sumType = new SumDefined();
+            sumType.labels.put("Inl", p.type_1.accept(new TypeVisitor(), arg));
+            sumType.labels.put("Inr", p.type_2.accept(new TypeVisitor(), arg));
+            return sumType;
         }
         public DefinedType visit(org.syntax.stella.Absyn.TypeTuple p, Context arg)
         { /* Code for TypeTuple goes here */
@@ -208,9 +209,10 @@ public class VisitTypeCheck
     {
         public DefinedType visit(org.syntax.stella.Absyn.AMatchCase p, Context arg)
         { /* Code for AMatchCase goes here */
-            p.pattern_.accept(new PatternVisitor(), arg);
-            p.expr_.accept(new ExprVisitor(), arg);
-            return null;
+            Context context = new Context(arg);
+            p.pattern_.accept(new PatternVisitor(), context);
+            var returnType = p.expr_.accept(new ExprVisitor(), context);
+            return returnType;
         }
     }
     public class OptionalTypingVisitor implements org.syntax.stella.Absyn.OptionalTyping.Visitor<DefinedType,Context>
@@ -259,13 +261,19 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.PatternInl p, Context arg)
         { /* Code for PatternInl goes here */
-            p.pattern_.accept(new PatternVisitor(), arg);
-            return null;
+            if (arg.MatchType.type != TypesEnum.Sum || !arg.MatchType.labels.containsKey("Inl"))
+                ExceptionsUtils.throwTypeException("PatternInl", "Sum : Inl", arg.MatchType.toString());
+
+            arg.MatchType = arg.MatchType.labels.get("Inl");
+            return p.pattern_.accept(new PatternVisitor(), arg);
         }
         public DefinedType visit(org.syntax.stella.Absyn.PatternInr p, Context arg)
         { /* Code for PatternInr goes here */
-            p.pattern_.accept(new PatternVisitor(), arg);
-            return null;
+            if (arg.MatchType.type != TypesEnum.Sum || !arg.MatchType.labels.containsKey("Inr"))
+                ExceptionsUtils.throwTypeException("PatternInr", "Sum : Inr", arg.MatchType.toString());
+
+            arg.MatchType = arg.MatchType.labels.get("Inr");
+            return p.pattern_.accept(new PatternVisitor(), arg);
         }
         public DefinedType visit(org.syntax.stella.Absyn.PatternTuple p, Context arg)
         { /* Code for PatternTuple goes here */
@@ -319,8 +327,8 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.PatternVar p, Context arg)
         { /* Code for PatternVar goes here */
-            //p.stellaident_;
-            return null;
+            arg.addLocal(p.stellaident_, arg.MatchType);
+            return arg.MatchType;
         }
     }
     public class LabelledPatternVisitor implements org.syntax.stella.Absyn.LabelledPattern.Visitor<DefinedType,Context>
@@ -439,11 +447,31 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.Match p, Context arg)
         { /* Code for Match goes here */
-            p.expr_.accept(new ExprVisitor(), arg);
+            DefinedType matchType = p.expr_.accept(new ExprVisitor(), arg);
+            Context context = new Context(arg);
+            context.MatchType = matchType;
+
+            List<DefinedType> returnTypes = new ArrayList<>();
+
             for (org.syntax.stella.Absyn.MatchCase x: p.listmatchcase_) {
-                x.accept(new MatchCaseVisitor(), arg);
+                returnTypes.add(x.accept(new MatchCaseVisitor(), context));
             }
-            return null;
+
+            var firstType = returnTypes.get(0);
+            DefinedType unexpectedType = firstType;
+            boolean allAreEqual = true;
+            for (var type : returnTypes) {
+                allAreEqual = type.equals(firstType, "Match");
+                if (!allAreEqual){
+                    unexpectedType = type;
+                    break;
+                }
+            }
+
+            if (!allAreEqual)
+                ExceptionsUtils.throwTypeException("Match - Return", firstType.toString(), unexpectedType.toString());
+
+            return firstType;
         }
         public DefinedType visit(org.syntax.stella.Absyn.List p, Context arg)
         { /* Code for List goes here */
@@ -555,13 +583,15 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.Inl p, Context arg)
         { /* Code for Inl goes here */
-            p.expr_.accept(new ExprVisitor(), arg);
-            return null;
+            SumDefined sumType = new SumDefined();
+            sumType.labels.put("Inl", p.expr_.accept(new ExprVisitor(), arg));
+            return sumType;
         }
         public DefinedType visit(org.syntax.stella.Absyn.Inr p, Context arg)
         { /* Code for Inr goes here */
-            p.expr_.accept(new ExprVisitor(), arg);
-            return null;
+            SumDefined sumType = new SumDefined();
+            sumType.labels.put("Inr", p.expr_.accept(new ExprVisitor(), arg));
+            return sumType;
         }
         public DefinedType visit(org.syntax.stella.Absyn.Succ p, Context arg)
         { /* Code for Succ goes here */
@@ -648,7 +678,7 @@ public class VisitTypeCheck
         public DefinedType visit(org.syntax.stella.Absyn.Var p, Context arg)
         { /* Code for Var goes here */
             DefinedType type;
-            type = arg.LookUp(p.stellaident_);
+            type = arg.lookUp(p.stellaident_);
             return type;
         }
     }

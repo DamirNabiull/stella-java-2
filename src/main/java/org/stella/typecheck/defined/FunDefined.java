@@ -18,22 +18,18 @@ public class FunDefined extends DefinedType {
     private String GetArgsAndReturns(DefinedType t, int k){
         StringBuilder ans = new StringBuilder();
 
-        if (t.type == TypesEnum.Fun) {
-            ans.append("\t".repeat(k))
-                    .append("FUN\n");
-            ans.append("\t".repeat(k + 1))
-                    .append("{ARGS}\n");
+        ans.append("\t".repeat(k))
+                .append("FUN\n");
+        ans.append("\t".repeat(k + 1))
+                .append("{ARGS}\n");
 
-            for (int i = 0; i < t.args.size(); i++)
-                ans.append(GetArgsAndReturns(t.args.get(i), k + 1));
+        for (int i = 0; i < t.args.size(); i++)
+            ans.append(t.args.get(i).toString(k+1));
 
-            ans.append("\n")
-                    .append("\t".repeat(k + 1))
-                    .append("{RETURN}\n")
-                    .append(GetArgsAndReturns(t.result, k + 1));
-        } else {
-            ans.append(t.toString(k));
-        }
+        ans.append("\n")
+                .append("\t".repeat(k + 1))
+                .append("{RETURN}\n")
+                .append(t.result.toString(k+1));
 
         if (k > 0)
             ans.append("\n");

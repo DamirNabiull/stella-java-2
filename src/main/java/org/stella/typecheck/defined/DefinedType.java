@@ -3,18 +3,23 @@ package org.stella.typecheck.defined;
 import org.stella.utils.ExceptionsUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DefinedType {
     public final TypesEnum type;
 
     public List<DefinedType> args;
 
+    public Map<String, DefinedType> labels;
+
     public DefinedType result;
 
     public DefinedType(TypesEnum t){
         type = t;
         args = new ArrayList<>();
+        labels = new HashMap<>();
         result = null;
     }
 
@@ -36,13 +41,22 @@ public class DefinedType {
         return "\t".repeat(k) + type.name();
     }
 
+    public String toString(String name, int k) {
+        return "\t".repeat(k) + name + " : " + type.name();
+    }
+
     protected boolean equals(DefinedType a, DefinedType b, String context) {
         if (a == b)
             return true;
 
-        if (a.type == b.type && equals(a.args, b.args, context))
+//        if (a.type == b.type && a.type == TypesEnum.Sum)
+//            return equalsInlInr(a.args, b.args, context);
+
+        if (a.type == b.type)
         {
-            return equals(a.result, b.result, context);
+            return equals(a.args, b.args, context)
+                    && equals(a.labels, b.labels, context)
+                    && equals(a.result, b.result, context);
         }
 
         String aType = a.type == null ? "NULL" : a.toString();
@@ -54,7 +68,7 @@ public class DefinedType {
     }
 
     protected boolean equals(List<DefinedType> a, List<DefinedType> b, String context) {
-        if (a == b)
+        if (a == b || a.equals(b))
             return true;
 
         if (a.size() == b.size())
@@ -67,6 +81,46 @@ public class DefinedType {
         }
 
         ExceptionsUtils.throwUnexpectedSizeException(context, a.size(), b.size());
+
+        return false;
+    }
+
+    protected boolean equals(Map<String, DefinedType> a, Map<String, DefinedType> b, String context) {
+        if (a == b || a.equals(b))
+            return true;
+
+        if (a.size() == 1 && b.size() >= 1) {
+            for (String label : a.keySet()) {
+                if (!b.containsKey(label))
+                    ExceptionsUtils.throwUnexpectedSizeException(context, a.size(), b.size()); // Add new exception
+
+                return equals(a.get(label), b.get(label), context);
+            }
+        }
+
+        if (b.size() == 1 && a.size() >= 1) {
+            for (String label : b.keySet()) {
+                if (!a.containsKey(label))
+                    ExceptionsUtils.throwUnexpectedSizeException(context, a.size(), b.size()); // Add new exception
+
+                return equals(a.get(label), b.get(label), context);
+            }
+        }
+
+        if (a.size() == b.size()) {
+            boolean labelsResult = a.keySet().equals(b.keySet());
+
+            if (!labelsResult)
+                ExceptionsUtils.throwUnexpectedSizeException(context, a.size(), b.size()); // Add new exception
+
+            for (String label : a.keySet()) {
+                labelsResult &=  equals(a.get(label), b.get(label), context);
+            }
+
+            return labelsResult;
+        }
+
+        ExceptionsUtils.throwUnexpectedSizeException(context, a.size(), b.size()); // Add new exception
 
         return false;
     }

@@ -8,7 +8,8 @@ public class SupportedExtensions {
     private static final List<String> SupportedExtensionsList = List.of(
             "#unit-type",
             "#pairs",
-            "#tuples"
+            "#tuples",
+            "#sum-types"
     );
 
     public static void Support(String extensionName){
