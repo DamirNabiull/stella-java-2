@@ -9,7 +9,8 @@ public class SupportedExtensions {
             "#unit-type",
             "#pairs",
             "#tuples",
-            "#sum-types"
+            "#sum-types",
+            "#variants"
     );
 
     public static void Support(String extensionName){

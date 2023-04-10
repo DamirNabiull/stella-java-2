@@ -177,10 +177,15 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.TypeVariant p, Context arg)
         { /* Code for TypeVariant goes here */
+            VariantDefined variantType = new VariantDefined();
+            Context context = new Context(arg);
+
             for (org.syntax.stella.Absyn.VariantFieldType x: p.listvariantfieldtype_) {
-                x.accept(new VariantFieldTypeVisitor(), arg);
+                x.accept(new VariantFieldTypeVisitor(), context);
             }
-            return null;
+            variantType.labels = context.LocalDefinitions;
+
+            return variantType;
         }
         public DefinedType visit(org.syntax.stella.Absyn.TypeList p, Context arg)
         { /* Code for TypeList goes here */
@@ -223,8 +228,7 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.SomeTyping p, Context arg)
         { /* Code for SomeTyping goes here */
-            p.type_.accept(new TypeVisitor(), arg);
-            return null;
+            return p.type_.accept(new TypeVisitor(), arg);
         }
     }
     public class PatternDataVisitor implements org.syntax.stella.Absyn.PatternData.Visitor<DefinedType,Context>
@@ -235,8 +239,8 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.SomePatternData p, Context arg)
         { /* Code for SomePatternData goes here */
-            p.pattern_.accept(new PatternVisitor(), arg);
-            return null;
+            return p.pattern_.accept(new PatternVisitor(), arg);
+//            return null;
         }
     }
     public class ExprDataVisitor implements org.syntax.stella.Absyn.ExprData.Visitor<DefinedType,Context>
@@ -247,17 +251,19 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.SomeExprData p, Context arg)
         { /* Code for SomeExprData goes here */
-            p.expr_.accept(new ExprVisitor(), arg);
-            return null;
+            return p.expr_.accept(new ExprVisitor(), arg);
+//            return null;
         }
     }
     public class PatternVisitor implements org.syntax.stella.Absyn.Pattern.Visitor<DefinedType,Context>
     {
         public DefinedType visit(org.syntax.stella.Absyn.PatternVariant p, Context arg)
         { /* Code for PatternVariant goes here */
+            if (arg.MatchType.type != TypesEnum.Variant || !arg.MatchType.labels.containsKey(p.stellaident_))
+                ExceptionsUtils.throwTypeException("PatternVariant", String.format("Variant : %s", p.stellaident_), arg.MatchType.toString());
             //p.stellaident_;
-            p.patterndata_.accept(new PatternDataVisitor(), arg);
-            return null;
+            arg.MatchType = arg.MatchType.labels.get(p.stellaident_);
+            return p.patterndata_.accept(new PatternDataVisitor(), arg);
         }
         public DefinedType visit(org.syntax.stella.Absyn.PatternInl p, Context arg)
         { /* Code for PatternInl goes here */
@@ -441,9 +447,10 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.Variant p, Context arg)
         { /* Code for Variant goes here */
-            //p.stellaident_;
-            p.exprdata_.accept(new ExprDataVisitor(), arg);
-            return null;
+            VariantDefined variantType = new VariantDefined();
+            var type = p.exprdata_.accept(new ExprDataVisitor(), arg);
+            variantType.labels.put(p.stellaident_, type);
+            return variantType;
         }
         public DefinedType visit(org.syntax.stella.Absyn.Match p, Context arg)
         { /* Code for Match goes here */
@@ -696,8 +703,9 @@ public class VisitTypeCheck
         public DefinedType visit(org.syntax.stella.Absyn.AVariantFieldType p, Context arg)
         { /* Code for AVariantFieldType goes here */
             //p.stellaident_;
-            p.optionaltyping_.accept(new OptionalTypingVisitor(), arg);
-            return null;
+            var type = p.optionaltyping_.accept(new OptionalTypingVisitor(), arg);
+            arg.addLocal(p.stellaident_, type);
+            return type;
         }
     }
     public class RecordFieldTypeVisitor implements org.syntax.stella.Absyn.RecordFieldType.Visitor<DefinedType,Context>
