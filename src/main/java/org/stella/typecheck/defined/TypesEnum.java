@@ -6,5 +6,6 @@ public enum TypesEnum {
     Fun,
     Unit,
     Tuple,
-    Sum
+    Sum,
+    Variant
 }
