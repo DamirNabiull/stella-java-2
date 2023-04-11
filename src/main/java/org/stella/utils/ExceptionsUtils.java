@@ -31,6 +31,10 @@ public class ExceptionsUtils {
     public static void throwUnexpectedSizeException(String message, int expected, int given){
         throwException(new UnexpectedSizeException(message, expected, given));
     }
+
+    public static void throwKeyDoesNotExistException(String message, String key){
+        throwException(new KeyDoesNotExistException(message, key));
+    }
 }
 
 class IncorrectTypeException extends RuntimeException {
@@ -60,5 +64,11 @@ class OutOfRangeException extends RuntimeException {
 class UnexpectedSizeException extends RuntimeException {
     public UnexpectedSizeException(String context, int size, int given) {
         super("\n\nUNEXPECTED_SIZE_ERROR:\n" + context + "\n\nCurrent size:\n" + size + "\n\nBut got:\n" + given + "\n\n");
+    }
+}
+
+class KeyDoesNotExistException extends RuntimeException {
+    public KeyDoesNotExistException(String context, String key) {
+        super("\n\nKEY_DOES_NOT_EXIST_ERROR:\n" + context + "\n\nExcepted key:\n" + key + "\n\n");
     }
 }

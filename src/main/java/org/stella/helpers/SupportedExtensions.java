@@ -10,7 +10,8 @@ public class SupportedExtensions {
             "#pairs",
             "#tuples",
             "#sum-types",
-            "#variants"
+            "#variants",
+            "#records"
     );
 
     public static void Support(String extensionName){
