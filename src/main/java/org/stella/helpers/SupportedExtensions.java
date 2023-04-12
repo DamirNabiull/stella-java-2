@@ -12,7 +12,8 @@ public class SupportedExtensions {
             "#sum-types",
             "#variants",
             "#records",
-            "#fixpoint-combinator"
+            "#fixpoint-combinator",
+            "#general-recursion"
     );
 
     public static void Support(String extensionName){

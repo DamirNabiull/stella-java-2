@@ -60,6 +60,8 @@ public class VisitTypeCheck
             funType.result = p.returntype_.accept(new ReturnTypeVisitor(), context);
             p.throwtype_.accept(new ThrowTypeVisitor(), context);
 
+            context.addLocal(p.stellaident_, funType);
+
             for (org.syntax.stella.Absyn.Decl x: p.listdecl_) {
                 x.accept(new DeclVisitor(), context);
             }
