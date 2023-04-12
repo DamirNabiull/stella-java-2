@@ -1,6 +1,6 @@
 # stella-implementation-in-java
 
-# Implemented extensions:
+## Implemented extensions:
 
 - #unit-type
 - #pairs
