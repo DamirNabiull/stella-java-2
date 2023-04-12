@@ -1,5 +1,18 @@
 # stella-implementation-in-java
 
+# Implemented extensions:
+
+- #unit-type
+- #pairs
+- #tuples
+- #sum-types
+- #variants
+- #records
+- #fixpoint-combinator
+- #general-recursion
+- #type-aliases
+- #structural-patterns
+
 Template for an implementation of [Stella](https://fizruk.github.io/stella/) in Java.
 
 ![Screenshot from Intellij IDEA](images/idea-demo.png)
