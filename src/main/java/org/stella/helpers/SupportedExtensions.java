@@ -11,7 +11,8 @@ public class SupportedExtensions {
             "#tuples",
             "#sum-types",
             "#variants",
-            "#records"
+            "#records",
+            "#fixpoint-combinator"
     );
 
     public static void Support(String extensionName){

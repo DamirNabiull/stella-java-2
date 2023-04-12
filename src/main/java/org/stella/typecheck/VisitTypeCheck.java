@@ -52,19 +52,18 @@ public class VisitTypeCheck
             for (org.syntax.stella.Absyn.Annotation x: p.listannotation_) {
                 x.accept(new AnnotationVisitor(), context);
             }
-            //p.stellaident_;
+
             for (org.syntax.stella.Absyn.ParamDecl x: p.listparamdecl_) {
                 funType.args.add(x.accept(new ParamDeclVisitor(), context));
             }
+
             funType.result = p.returntype_.accept(new ReturnTypeVisitor(), context);
             p.throwtype_.accept(new ThrowTypeVisitor(), context);
+
             for (org.syntax.stella.Absyn.Decl x: p.listdecl_) {
                 x.accept(new DeclVisitor(), context);
             }
             var body = p.expr_.accept(new ExprVisitor(), context);
-
-            // Clear context
-            arg.clearLocal();
 
             funType.result.equals(body, "FunDecl [" + p.stellaident_ + "]");
 
@@ -651,8 +650,12 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.Fix p, Context arg)
         { /* Code for Fix goes here */
-            p.expr_.accept(new ExprVisitor(), arg);
-            return null;
+            var type = p.expr_.accept(new ExprVisitor(), arg);
+
+            if (type.type != TypesEnum.Fun || type.result == null)
+                ExceptionsUtils.throwTypeException("Fix", "Fun", type.toString());
+
+            return type.result;
         }
         public DefinedType visit(org.syntax.stella.Absyn.NatRec p, Context arg)
         { /* Code for NatRec goes here */
