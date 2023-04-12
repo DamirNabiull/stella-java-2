@@ -76,9 +76,9 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.DeclTypeAlias p, Context arg)
         { /* Code for DeclTypeAlias goes here */
-            //p.stellaident_;
-            p.type_.accept(new TypeVisitor(), arg);
-            return null;
+            var type = p.type_.accept(new TypeVisitor(), arg);
+            arg.addGlobal(p.stellaident_, type);
+            return type;
         }
     }
     public class LocalDeclVisitor implements org.syntax.stella.Absyn.LocalDecl.Visitor<DefinedType,Context>
@@ -212,8 +212,9 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.TypeVar p, Context arg)
         { /* Code for TypeVar goes here */
-            //p.stellaident_;
-            return null;
+            DefinedType type;
+            type = arg.lookUp(p.stellaident_);
+            return type;
         }
     }
     public class MatchCaseVisitor implements org.syntax.stella.Absyn.MatchCase.Visitor<DefinedType,Context>

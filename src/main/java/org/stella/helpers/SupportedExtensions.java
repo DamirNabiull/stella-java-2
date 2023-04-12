@@ -13,7 +13,8 @@ public class SupportedExtensions {
             "#variants",
             "#records",
             "#fixpoint-combinator",
-            "#general-recursion"
+            "#general-recursion",
+            "#type-aliases"
     );
 
     public static void Support(String extensionName){
