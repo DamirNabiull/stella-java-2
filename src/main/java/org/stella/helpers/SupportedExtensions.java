@@ -14,7 +14,8 @@ public class SupportedExtensions {
             "#records",
             "#fixpoint-combinator",
             "#general-recursion",
-            "#type-aliases"
+            "#type-aliases",
+            "#structural-patterns"
     );
 
     public static void Support(String extensionName){

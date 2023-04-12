@@ -23,6 +23,11 @@ public class DefinedType {
         result = null;
     }
 
+    public boolean equals(DefinedType o)
+    {
+        return equals(this, o, "No context given");
+    }
+
     public boolean equals(DefinedType o, String context)
     {
         return equals(this, o, context);

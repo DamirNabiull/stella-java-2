@@ -289,17 +289,33 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.PatternTuple p, Context arg)
         { /* Code for PatternTuple goes here */
+            TupleDefined tupleType = new TupleDefined();
+            Context context = new Context(arg);
+            int i = 0;
             for (org.syntax.stella.Absyn.Pattern x: p.listpattern_) {
-                x.accept(new PatternVisitor(), arg);
+                context.MatchType = arg.MatchType.args.get(i);
+                tupleType.args.add(x.accept(new PatternVisitor(), context));
+                i++;
             }
-            return null;
+
+            if (arg.MatchType.type != TypesEnum.Tuple || !tupleType.equals(arg.MatchType, "Tuple"))
+                ExceptionsUtils.throwTypeException("PatternTuple", tupleType.toString(), arg.MatchType.toString());
+
+            return arg.MatchType;
         }
         public DefinedType visit(org.syntax.stella.Absyn.PatternRecord p, Context arg)
         { /* Code for PatternRecord goes here */
+            RecordDefined recordType = new RecordDefined();
+            Context context = new Context(arg);
             for (org.syntax.stella.Absyn.LabelledPattern x: p.listlabelledpattern_) {
-                x.accept(new LabelledPatternVisitor(), arg);
+                x.accept(new LabelledPatternVisitor(), context);
             }
-            return null;
+            recordType.labels = context.LocalDefinitions;
+
+            if (arg.MatchType.type != TypesEnum.Record || !recordType.equals(arg.MatchType, "PatternRecord"))
+                ExceptionsUtils.throwTypeException("PatternRecord", recordType.toString(), arg.MatchType.toString());
+
+            return arg.MatchType;
         }
         public DefinedType visit(org.syntax.stella.Absyn.PatternList p, Context arg)
         { /* Code for PatternList goes here */
@@ -316,26 +332,39 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.PatternFalse p, Context arg)
         { /* Code for PatternFalse goes here */
-            return null;
+            if (arg.MatchType.type != TypesEnum.Bool)
+                ExceptionsUtils.throwTypeException("PatternFalse", "Bool", arg.MatchType.toString());
+
+            return arg.MatchType;
         }
         public DefinedType visit(org.syntax.stella.Absyn.PatternTrue p, Context arg)
         { /* Code for PatternTrue goes here */
-            return null;
+            if (arg.MatchType.type != TypesEnum.Bool)
+                ExceptionsUtils.throwTypeException("PatternTrue", "Bool", arg.MatchType.toString());
+
+            return arg.MatchType;
         }
         public DefinedType visit(org.syntax.stella.Absyn.PatternUnit p, Context arg)
         { /* Code for PatternUnit goes here */
-            System.out.println("PatternUnit");
-            return null;
+            if (arg.MatchType.type != TypesEnum.Unit)
+                ExceptionsUtils.throwTypeException("PatternUnit", "Unit", arg.MatchType.toString());
+
+            return arg.MatchType;
         }
         public DefinedType visit(org.syntax.stella.Absyn.PatternInt p, Context arg)
         { /* Code for PatternInt goes here */
-            //p.integer_;
-            return null;
+            if (arg.MatchType.type != TypesEnum.Nat || p.integer_ != 0)
+                ExceptionsUtils.throwTypeException("PatternInt", "Nat : 0", arg.MatchType + " : " + p.integer_);
+
+            return arg.MatchType;
         }
         public DefinedType visit(org.syntax.stella.Absyn.PatternSucc p, Context arg)
         { /* Code for PatternSucc goes here */
-            p.pattern_.accept(new PatternVisitor(), arg);
-            return null;
+            var type = p.pattern_.accept(new PatternVisitor(), arg);
+            if (arg.MatchType.type != TypesEnum.Nat || type.type != TypesEnum.Nat)
+                ExceptionsUtils.throwTypeException("PatternSucc", "Nat", arg.MatchType.toString());
+
+            return arg.MatchType;
         }
         public DefinedType visit(org.syntax.stella.Absyn.PatternVar p, Context arg)
         { /* Code for PatternVar goes here */
@@ -348,8 +377,11 @@ public class VisitTypeCheck
         public DefinedType visit(org.syntax.stella.Absyn.ALabelledPattern p, Context arg)
         { /* Code for ALabelledPattern goes here */
             //p.stellaident_;
-            p.pattern_.accept(new PatternVisitor(), arg);
-            return null;
+            Context context = new Context(arg);
+            context.MatchType = arg.MatchType.labels.get(p.stellaident_);
+            var type = p.pattern_.accept(new PatternVisitor(), context);
+            arg.addLocal(p.stellaident_, type);
+            return type;
         }
     }
     public class BindingVisitor implements org.syntax.stella.Absyn.Binding.Visitor<DefinedType,Context>
