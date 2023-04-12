@@ -354,7 +354,7 @@ public class VisitTypeCheck
         public DefinedType visit(org.syntax.stella.Absyn.PatternInt p, Context arg)
         { /* Code for PatternInt goes here */
             if (arg.MatchType.type != TypesEnum.Nat || p.integer_ != 0)
-                ExceptionsUtils.throwTypeException("PatternInt", "Nat : 0", arg.MatchType + " : " + p.integer_);
+                ExceptionsUtils.throwTypeException("PatternInt", "Nat : 0", arg.MatchType.toString());
 
             return arg.MatchType;
         }
