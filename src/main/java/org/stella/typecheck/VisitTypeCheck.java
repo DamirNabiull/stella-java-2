@@ -2,6 +2,8 @@
 
 package org.stella.typecheck;
 
+import org.syntax.stella.Absyn.*;
+
 import org.stella.helpers.SupportedExtensions;
 import org.stella.typecheck.defined.*;
 import org.stella.utils.ExceptionsUtils;
@@ -79,6 +81,14 @@ public class VisitTypeCheck
             var type = p.type_.accept(new TypeVisitor(), arg);
             arg.addGlobal(p.stellaident_, type);
             return type;
+        }
+
+        public DefinedType visit(DeclExceptionType p, Context arg) {
+            return null;
+        }
+
+        public DefinedType visit(DeclExceptionVariant p, Context arg) {
+            return null;
         }
     }
     public class LocalDeclVisitor implements org.syntax.stella.Absyn.LocalDecl.Visitor<DefinedType,Context>
@@ -209,6 +219,17 @@ public class VisitTypeCheck
         public DefinedType visit(org.syntax.stella.Absyn.TypeUnit p, Context arg)
         { /* Code for TypeUnit goes here */
             return new UnitDefined();
+        }
+        public DefinedType visit(TypeTop p, Context arg) {
+            return null;
+        }
+
+        public DefinedType visit(TypeBottom p, Context arg) {
+            return null;
+        }
+
+        public DefinedType visit(TypeRef p, Context arg) {
+            return null;
         }
         public DefinedType visit(org.syntax.stella.Absyn.TypeVar p, Context arg)
         { /* Code for TypeVar goes here */
@@ -402,6 +423,9 @@ public class VisitTypeCheck
             p.expr_2.accept(new ExprVisitor(), arg);
             return null;
         }
+        public DefinedType visit(Assign p, Context arg) {
+            return null;
+        }
         public DefinedType visit(org.syntax.stella.Absyn.If p, Context arg)
         { /* Code for If goes here */
             var t1 = p.expr_1.accept(new ExprVisitor(), arg);
@@ -470,6 +494,9 @@ public class VisitTypeCheck
         { /* Code for TypeAsc goes here */
             p.expr_.accept(new ExprVisitor(), arg);
             p.type_.accept(new TypeVisitor(), arg);
+            return null;
+        }
+        public DefinedType visit(TypeCast p, Context arg) {
             return null;
         }
         public DefinedType visit(org.syntax.stella.Absyn.Abstraction p, Context arg)
@@ -562,6 +589,13 @@ public class VisitTypeCheck
             p.expr_2.accept(new ExprVisitor(), arg);
             return null;
         }
+        public DefinedType visit(Ref p, Context arg) {
+            return null;
+        }
+
+        public DefinedType visit(Deref p, Context arg) {
+            return null;
+        }
         public DefinedType visit(org.syntax.stella.Absyn.Application p, Context arg)
         { /* Code for Application goes here */
             List<DefinedType> argType = new ArrayList<>();
@@ -635,6 +669,21 @@ public class VisitTypeCheck
         public DefinedType visit(org.syntax.stella.Absyn.Tail p, Context arg)
         { /* Code for Tail goes here */
             p.expr_.accept(new ExprVisitor(), arg);
+            return null;
+        }
+        public DefinedType visit(Panic p, Context arg) {
+            return null;
+        }
+
+        public DefinedType visit(Throw p, Context arg) {
+            return null;
+        }
+
+        public DefinedType visit(TryCatch p, Context arg) {
+            return null;
+        }
+
+        public DefinedType visit(TryWith p, Context arg) {
             return null;
         }
         public DefinedType visit(org.syntax.stella.Absyn.Inl p, Context arg)
@@ -733,6 +782,9 @@ public class VisitTypeCheck
                 return new NatDefined();
 
             ExceptionsUtils.throwTypeException("ConstInt", "value == 0", "value != 0");
+            return null;
+        }
+        public DefinedType visit(ConstMemory p, Context arg) {
             return null;
         }
         public DefinedType visit(org.syntax.stella.Absyn.Var p, Context arg)
