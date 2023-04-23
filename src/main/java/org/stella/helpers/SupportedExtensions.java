@@ -18,7 +18,8 @@ public class SupportedExtensions {
             "#structural-patterns",
             "#multiparameter-functions",
             "#nested-function-declarations",
-            "#sequencing"
+            "#sequencing",
+            "#references"
     );
 
     public static void Support(String extensionName){

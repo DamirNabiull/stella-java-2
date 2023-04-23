@@ -8,5 +8,6 @@ public enum TypesEnum {
     Tuple,
     Sum,
     Variant,
-    Record
+    Record,
+    Ref
 }

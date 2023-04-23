@@ -1,7 +1,7 @@
 language core;
 
 extend with
-  #unit-types,
+  #unit-type,
   #references,
   #sequencing;
 

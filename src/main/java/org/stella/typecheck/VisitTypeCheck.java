@@ -223,13 +223,13 @@ public class VisitTypeCheck
         public DefinedType visit(TypeTop p, Context arg) {
             return null;
         }
-
         public DefinedType visit(TypeBottom p, Context arg) {
             return null;
         }
-
         public DefinedType visit(TypeRef p, Context arg) {
-            return null;
+            RefDefined refType = new RefDefined();
+            refType.args.add(p.type_.accept(new TypeVisitor(), arg));
+            return refType;
         }
         public DefinedType visit(org.syntax.stella.Absyn.TypeVar p, Context arg)
         { /* Code for TypeVar goes here */
@@ -422,12 +422,19 @@ public class VisitTypeCheck
             var t1 = p.expr_1.accept(new ExprVisitor(), arg);
             var t2 = p.expr_2.accept(new ExprVisitor(), arg);
 
-            if (!(t2 instanceof UnitDefined))
+            if (!(t1.equals(new UnitDefined())))
                 ExceptionsUtils.throwTypeException("Sequence", "Unit", t1.toString());
 
             return t2;
         }
         public DefinedType visit(Assign p, Context arg) {
+            var t1 = p.expr_1.accept(new ExprVisitor(), arg);
+            var t2 = p.expr_2.accept(new ExprVisitor(), arg);
+
+            if (t1.type == TypesEnum.Ref && t1.args.get(0).equals(t2))
+                return new UnitDefined();
+
+            ExceptionsUtils.throwTypeException("Assign", "Ref", t1.toString());
             return null;
         }
         public DefinedType visit(org.syntax.stella.Absyn.If p, Context arg)
@@ -594,11 +601,17 @@ public class VisitTypeCheck
             return null;
         }
         public DefinedType visit(Ref p, Context arg) {
-            return null;
+            RefDefined refType = new RefDefined();
+            refType.args.add(p.expr_.accept(new ExprVisitor(), arg));
+            return refType;
         }
 
         public DefinedType visit(Deref p, Context arg) {
-            return null;
+            var type = p.expr_.accept(new ExprVisitor(), arg);
+            if (type.type != TypesEnum.Ref)
+                ExceptionsUtils.throwTypeException("Deref", "Ref", type.toString());
+
+            return type.args.get(0);
         }
         public DefinedType visit(org.syntax.stella.Absyn.Application p, Context arg)
         { /* Code for Application goes here */
