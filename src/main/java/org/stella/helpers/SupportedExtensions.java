@@ -6,6 +6,7 @@ import java.util.List;
 
 public class SupportedExtensions {
     private static final List<String> SupportedExtensionsList = List.of(
+            "#arithmetic-operators",
             "#unit-type",
             "#pairs",
             "#tuples",

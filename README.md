@@ -2,6 +2,7 @@
 
 ## Implemented extensions:
 
+- #arithmetic-operators
 - #unit-type
 - #pairs
 - #tuples

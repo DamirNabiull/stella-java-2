@@ -566,14 +566,22 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.Add p, Context arg)
         { /* Code for Add goes here */
-            p.expr_1.accept(new ExprVisitor(), arg);
-            p.expr_2.accept(new ExprVisitor(), arg);
+            var t1 = p.expr_1.accept(new ExprVisitor(), arg);
+            var t2 = p.expr_2.accept(new ExprVisitor(), arg);
+            if (t1.equals(t2) && t1.type == TypesEnum.Nat)
+                return t1;
+
+            ExceptionsUtils.throwTypeException("Add", "Nat", t1.toString());
             return null;
         }
         public DefinedType visit(org.syntax.stella.Absyn.Subtract p, Context arg)
         { /* Code for Subtract goes here */
-            p.expr_1.accept(new ExprVisitor(), arg);
-            p.expr_2.accept(new ExprVisitor(), arg);
+            var t1 = p.expr_1.accept(new ExprVisitor(), arg);
+            var t2 = p.expr_2.accept(new ExprVisitor(), arg);
+            if (t1.equals(t2) && t1.type == TypesEnum.Nat)
+                return t1;
+
+            ExceptionsUtils.throwTypeException("Subtract", "Nat", t1.toString());
             return null;
         }
         public DefinedType visit(org.syntax.stella.Absyn.LogicOr p, Context arg)
@@ -584,14 +592,22 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.Multiply p, Context arg)
         { /* Code for Multiply goes here */
-            p.expr_1.accept(new ExprVisitor(), arg);
-            p.expr_2.accept(new ExprVisitor(), arg);
+            var t1 = p.expr_1.accept(new ExprVisitor(), arg);
+            var t2 = p.expr_2.accept(new ExprVisitor(), arg);
+            if (t1.equals(t2) && t1.type == TypesEnum.Nat)
+                return t1;
+
+            ExceptionsUtils.throwTypeException("Multiply", "Nat", t1.toString());
             return null;
         }
         public DefinedType visit(org.syntax.stella.Absyn.Divide p, Context arg)
         { /* Code for Divide goes here */
-            p.expr_1.accept(new ExprVisitor(), arg);
-            p.expr_2.accept(new ExprVisitor(), arg);
+            var t1 = p.expr_1.accept(new ExprVisitor(), arg);
+            var t2 = p.expr_2.accept(new ExprVisitor(), arg);
+            if (t1.equals(t2) && t1.type == TypesEnum.Nat)
+                return t1;
+
+            ExceptionsUtils.throwTypeException("Divide", "Nat", t1.toString());
             return null;
         }
         public DefinedType visit(org.syntax.stella.Absyn.LogicAnd p, Context arg)
