@@ -3,6 +3,7 @@
 ## Implemented extensions:
 
 - #arithmetic-operators
+- #comparison-operations
 - #unit-type
 - #pairs
 - #tuples

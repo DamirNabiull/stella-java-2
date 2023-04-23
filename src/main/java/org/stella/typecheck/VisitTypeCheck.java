@@ -467,38 +467,62 @@ public class VisitTypeCheck
         }
         public DefinedType visit(org.syntax.stella.Absyn.LessThan p, Context arg)
         { /* Code for LessThan goes here */
-            p.expr_1.accept(new ExprVisitor(), arg);
-            p.expr_2.accept(new ExprVisitor(), arg);
+            var t1 = p.expr_1.accept(new ExprVisitor(), arg);
+            var t2 = p.expr_2.accept(new ExprVisitor(), arg);
+            if (t1.equals(t2) && t1.type == TypesEnum.Nat)
+                return new BoolDefined();
+
+            ExceptionsUtils.throwTypeException("LessThan", "Nat", t1.toString());
             return null;
         }
         public DefinedType visit(org.syntax.stella.Absyn.LessThanOrEqual p, Context arg)
         { /* Code for LessThanOrEqual goes here */
-            p.expr_1.accept(new ExprVisitor(), arg);
-            p.expr_2.accept(new ExprVisitor(), arg);
+            var t1 = p.expr_1.accept(new ExprVisitor(), arg);
+            var t2 = p.expr_2.accept(new ExprVisitor(), arg);
+            if (t1.equals(t2) && t1.type == TypesEnum.Nat)
+                return new BoolDefined();
+
+            ExceptionsUtils.throwTypeException("LessThanOrEqual", "Nat", t1.toString());
             return null;
         }
         public DefinedType visit(org.syntax.stella.Absyn.GreaterThan p, Context arg)
         { /* Code for GreaterThan goes here */
-            p.expr_1.accept(new ExprVisitor(), arg);
-            p.expr_2.accept(new ExprVisitor(), arg);
+            var t1 = p.expr_1.accept(new ExprVisitor(), arg);
+            var t2 = p.expr_2.accept(new ExprVisitor(), arg);
+            if (t1.equals(t2) && t1.type == TypesEnum.Nat)
+                return new BoolDefined();
+
+            ExceptionsUtils.throwTypeException("GreaterThan", "Nat", t1.toString());
             return null;
         }
         public DefinedType visit(org.syntax.stella.Absyn.GreaterThanOrEqual p, Context arg)
         { /* Code for GreaterThanOrEqual goes here */
-            p.expr_1.accept(new ExprVisitor(), arg);
-            p.expr_2.accept(new ExprVisitor(), arg);
+            var t1 = p.expr_1.accept(new ExprVisitor(), arg);
+            var t2 = p.expr_2.accept(new ExprVisitor(), arg);
+            if (t1.equals(t2) && t1.type == TypesEnum.Nat)
+                return new BoolDefined();
+
+            ExceptionsUtils.throwTypeException("GreaterThanOrEqual", "Nat", t1.toString());
             return null;
         }
         public DefinedType visit(org.syntax.stella.Absyn.Equal p, Context arg)
         { /* Code for Equal goes here */
-            p.expr_1.accept(new ExprVisitor(), arg);
-            p.expr_2.accept(new ExprVisitor(), arg);
+            var t1 = p.expr_1.accept(new ExprVisitor(), arg);
+            var t2 = p.expr_2.accept(new ExprVisitor(), arg);
+            if (t1.equals(t2) && t1.type == TypesEnum.Nat)
+                return new BoolDefined();
+
+            ExceptionsUtils.throwTypeException("Equal", "Nat", t1.toString());
             return null;
         }
         public DefinedType visit(org.syntax.stella.Absyn.NotEqual p, Context arg)
         { /* Code for NotEqual goes here */
-            p.expr_1.accept(new ExprVisitor(), arg);
-            p.expr_2.accept(new ExprVisitor(), arg);
+            var t1 = p.expr_1.accept(new ExprVisitor(), arg);
+            var t2 = p.expr_2.accept(new ExprVisitor(), arg);
+            if (t1.equals(t2) && t1.type == TypesEnum.Nat)
+                return new BoolDefined();
+
+            ExceptionsUtils.throwTypeException("NotEqual", "Nat", t1.toString());
             return null;
         }
         public DefinedType visit(org.syntax.stella.Absyn.TypeAsc p, Context arg)
