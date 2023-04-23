@@ -18,6 +18,7 @@
 - #nested-function-declarations
 - #sequencing
 - #references
+- #panic
 
 Template for an implementation of [Stella](https://fizruk.github.io/stella/) in Java.
 

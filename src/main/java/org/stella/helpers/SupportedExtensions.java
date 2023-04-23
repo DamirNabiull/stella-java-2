@@ -21,7 +21,8 @@ public class SupportedExtensions {
             "#multiparameter-functions",
             "#nested-function-declarations",
             "#sequencing",
-            "#references"
+            "#references",
+            "#panic"
     );
 
     public static void Support(String extensionName){

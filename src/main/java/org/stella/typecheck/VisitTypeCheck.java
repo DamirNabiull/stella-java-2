@@ -431,11 +431,10 @@ public class VisitTypeCheck
             var t1 = p.expr_1.accept(new ExprVisitor(), arg);
             var t2 = p.expr_2.accept(new ExprVisitor(), arg);
 
-            if (t1.type == TypesEnum.Ref && t1.args.get(0).equals(t2))
-                return new UnitDefined();
+            if (!t1.equals(new RefDefined()) || !t1.args.get(0).equals(t2))
+                return null;
 
-            ExceptionsUtils.throwTypeException("Assign", "Ref", t1.toString());
-            return null;
+            return new UnitDefined();
         }
         public DefinedType visit(org.syntax.stella.Absyn.If p, Context arg)
         { /* Code for If goes here */
@@ -443,11 +442,10 @@ public class VisitTypeCheck
             var t2 = p.expr_2.accept(new ExprVisitor(), arg);
             var t3 = p.expr_3.accept(new ExprVisitor(), arg);
 
-            if (t1.type == TypesEnum.Bool && t2.equals(t3, "IF"))
-                return t2;
+            if (!t1.equals(new BoolDefined()) || !t2.equals(t3, "IF"))
+                return null;
 
-            ExceptionsUtils.throwTypeException("IF [T1]", "Bool", t1.toString());
-            return null;
+            return t2;
         }
         public DefinedType visit(org.syntax.stella.Absyn.Let p, Context arg)
         { /* Code for Let goes here */
@@ -469,7 +467,7 @@ public class VisitTypeCheck
         { /* Code for LessThan goes here */
             var t1 = p.expr_1.accept(new ExprVisitor(), arg);
             var t2 = p.expr_2.accept(new ExprVisitor(), arg);
-            if (t1.equals(t2) && t1.type == TypesEnum.Nat)
+            if (t1.equals(t2) && t1.equals(new NatDefined()))
                 return new BoolDefined();
 
             ExceptionsUtils.throwTypeException("LessThan", "Nat", t1.toString());
@@ -479,7 +477,7 @@ public class VisitTypeCheck
         { /* Code for LessThanOrEqual goes here */
             var t1 = p.expr_1.accept(new ExprVisitor(), arg);
             var t2 = p.expr_2.accept(new ExprVisitor(), arg);
-            if (t1.equals(t2) && t1.type == TypesEnum.Nat)
+            if (t1.equals(t2) && t1.equals(new NatDefined()))
                 return new BoolDefined();
 
             ExceptionsUtils.throwTypeException("LessThanOrEqual", "Nat", t1.toString());
@@ -489,7 +487,7 @@ public class VisitTypeCheck
         { /* Code for GreaterThan goes here */
             var t1 = p.expr_1.accept(new ExprVisitor(), arg);
             var t2 = p.expr_2.accept(new ExprVisitor(), arg);
-            if (t1.equals(t2) && t1.type == TypesEnum.Nat)
+            if (t1.equals(t2) && t1.equals(new NatDefined()))
                 return new BoolDefined();
 
             ExceptionsUtils.throwTypeException("GreaterThan", "Nat", t1.toString());
@@ -499,7 +497,7 @@ public class VisitTypeCheck
         { /* Code for GreaterThanOrEqual goes here */
             var t1 = p.expr_1.accept(new ExprVisitor(), arg);
             var t2 = p.expr_2.accept(new ExprVisitor(), arg);
-            if (t1.equals(t2) && t1.type == TypesEnum.Nat)
+            if (t1.equals(t2) && t1.equals(new NatDefined()))
                 return new BoolDefined();
 
             ExceptionsUtils.throwTypeException("GreaterThanOrEqual", "Nat", t1.toString());
@@ -509,7 +507,7 @@ public class VisitTypeCheck
         { /* Code for Equal goes here */
             var t1 = p.expr_1.accept(new ExprVisitor(), arg);
             var t2 = p.expr_2.accept(new ExprVisitor(), arg);
-            if (t1.equals(t2) && t1.type == TypesEnum.Nat)
+            if (t1.equals(t2) && t1.equals(new NatDefined()))
                 return new BoolDefined();
 
             ExceptionsUtils.throwTypeException("Equal", "Nat", t1.toString());
@@ -519,7 +517,7 @@ public class VisitTypeCheck
         { /* Code for NotEqual goes here */
             var t1 = p.expr_1.accept(new ExprVisitor(), arg);
             var t2 = p.expr_2.accept(new ExprVisitor(), arg);
-            if (t1.equals(t2) && t1.type == TypesEnum.Nat)
+            if (t1.equals(t2) && t1.equals(new NatDefined()))
                 return new BoolDefined();
 
             ExceptionsUtils.throwTypeException("NotEqual", "Nat", t1.toString());
@@ -592,7 +590,7 @@ public class VisitTypeCheck
         { /* Code for Add goes here */
             var t1 = p.expr_1.accept(new ExprVisitor(), arg);
             var t2 = p.expr_2.accept(new ExprVisitor(), arg);
-            if (t1.equals(t2) && t1.type == TypesEnum.Nat)
+            if (t1.equals(t2) && t1.equals(new NatDefined()))
                 return t1;
 
             ExceptionsUtils.throwTypeException("Add", "Nat", t1.toString());
@@ -602,7 +600,7 @@ public class VisitTypeCheck
         { /* Code for Subtract goes here */
             var t1 = p.expr_1.accept(new ExprVisitor(), arg);
             var t2 = p.expr_2.accept(new ExprVisitor(), arg);
-            if (t1.equals(t2) && t1.type == TypesEnum.Nat)
+            if (t1.equals(t2) && t1.equals(new NatDefined()))
                 return t1;
 
             ExceptionsUtils.throwTypeException("Subtract", "Nat", t1.toString());
@@ -618,7 +616,7 @@ public class VisitTypeCheck
         { /* Code for Multiply goes here */
             var t1 = p.expr_1.accept(new ExprVisitor(), arg);
             var t2 = p.expr_2.accept(new ExprVisitor(), arg);
-            if (t1.equals(t2) && t1.type == TypesEnum.Nat)
+            if (t1.equals(t2) && t1.equals(new NatDefined()))
                 return t1;
 
             ExceptionsUtils.throwTypeException("Multiply", "Nat", t1.toString());
@@ -628,7 +626,7 @@ public class VisitTypeCheck
         { /* Code for Divide goes here */
             var t1 = p.expr_1.accept(new ExprVisitor(), arg);
             var t2 = p.expr_2.accept(new ExprVisitor(), arg);
-            if (t1.equals(t2) && t1.type == TypesEnum.Nat)
+            if (t1.equals(t2) && t1.equals(new NatDefined()))
                 return t1;
 
             ExceptionsUtils.throwTypeException("Divide", "Nat", t1.toString());
@@ -729,7 +727,7 @@ public class VisitTypeCheck
             return null;
         }
         public DefinedType visit(Panic p, Context arg) {
-            return null;
+            return new PanicDefined();
         }
 
         public DefinedType visit(Throw p, Context arg) {

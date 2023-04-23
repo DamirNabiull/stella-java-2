@@ -9,5 +9,6 @@ public enum TypesEnum {
     Sum,
     Variant,
     Record,
-    Ref
+    Ref,
+    Panic
 }

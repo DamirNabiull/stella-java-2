@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DefinedType {
-    public final TypesEnum type;
+    public TypesEnum type;
 
     public List<DefinedType> args;
 
@@ -62,6 +62,24 @@ public class DefinedType {
             return equals(a.args, b.args, context)
                     && equals(a.labels, b.labels, context)
                     && equals(a.result, b.result, context);
+        }
+
+        if (a.type == TypesEnum.Panic)
+        {
+            a.type = b.type;
+            a.args = b.args;
+            a.labels = b.labels;
+            a.result = b.result;
+            return true;
+        }
+
+        if (b.type == TypesEnum.Panic)
+        {
+            b.type = a.type;
+            b.args = a.args;
+            b.labels = a.labels;
+            b.result = a.result;
+            return true;
         }
 
         String aType = a.type == null ? "NULL" : a.toString();

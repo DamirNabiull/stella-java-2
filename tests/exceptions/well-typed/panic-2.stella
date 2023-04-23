@@ -1,7 +1,7 @@
 language core;
 
 extend with
-  #comparison-operators,
+  #comparison-operations,
   #arithmetic-operators,
   #panic;
 
