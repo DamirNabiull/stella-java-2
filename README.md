@@ -14,6 +14,7 @@
 - #structural-patterns
 - #multiparameter-functions
 - #nested-function-declarations
+- #sequencing
 
 Template for an implementation of [Stella](https://fizruk.github.io/stella/) in Java.
 

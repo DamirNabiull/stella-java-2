@@ -419,9 +419,13 @@ public class VisitTypeCheck
     {
         public DefinedType visit(org.syntax.stella.Absyn.Sequence p, Context arg)
         { /* Code for Sequence goes here */
-            p.expr_1.accept(new ExprVisitor(), arg);
-            p.expr_2.accept(new ExprVisitor(), arg);
-            return null;
+            var t1 = p.expr_1.accept(new ExprVisitor(), arg);
+            var t2 = p.expr_2.accept(new ExprVisitor(), arg);
+
+            if (!(t2 instanceof UnitDefined))
+                ExceptionsUtils.throwTypeException("Sequence", "Unit", t1.toString());
+
+            return t2;
         }
         public DefinedType visit(Assign p, Context arg) {
             return null;
