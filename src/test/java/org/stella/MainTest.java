@@ -36,12 +36,12 @@ class MainTest {
             "tests/my-well-typed/bottom.stella",
             "tests/subtyping/well-typed/subtyping-1.stella",
             "tests/subtyping/well-typed/subtyping-3.stella",
-//"tests/subtyping/well-typed/subtyping-7.stella",
+            "tests/subtyping/well-typed/subtyping-7.stella",
             "tests/subtyping/well-typed/subtyping-5.stella",
             "tests/subtyping/well-typed/subtyping-2.stella",
             "tests/subtyping/well-typed/subtyping-6.stella",
             "tests/subtyping/well-typed/subtyping-4.stella",
-//"tests/subtyping/well-typed/subtyping-8.stella"
+            //"tests/subtyping/well-typed/subtyping-8.stella"
     })
     public void testWellTyped(String filepath) throws IOException, Exception {
         String[] args = new String[0];
@@ -85,7 +85,7 @@ class MainTest {
             "tests/subtyping/ill-typed/bad-subtyping-1.stella",
             "tests/subtyping/ill-typed/bad-subtyping-2.stella",
             "tests/subtyping/ill-typed/bad-subtyping-3.stella",
-//"tests/subtyping/ill-typed/bad-subtyping-4.stella",
+            "tests/subtyping/ill-typed/bad-subtyping-4.stella",
 //"tests/subtyping/ill-typed/bad-subtyping-5.stella"
     })
     public void testIllTyped(String filepath) throws IOException, Exception {
