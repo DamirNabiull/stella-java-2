@@ -2,10 +2,7 @@ package org.stella.typecheck.defined;
 
 import org.stella.utils.ExceptionsUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DefinedType {
     public TypesEnum type;
@@ -59,8 +56,8 @@ public class DefinedType {
 
         if (a.type == b.type)
         {
-            return equals(a.args, b.args, context)
-                    && equals(a.labels, b.labels, context)
+            return equals(b.args, a.args, context)
+                    && equals(a.labels, b.labels, context, a.type)
                     && equals(a.result, b.result, context);
         }
 
@@ -108,42 +105,65 @@ public class DefinedType {
         return false;
     }
 
-    protected boolean equals(Map<String, DefinedType> a, Map<String, DefinedType> b, String context) {
+    protected boolean equals(Map<String, DefinedType> a, Map<String, DefinedType> b, String context, TypesEnum type) {
         if (a == b || a.equals(b))
             return true;
 
-        if (a.size() == 1 && b.size() >= 1) {
-            for (String label : a.keySet()) {
-                if (!b.containsKey(label))
+        if (type == TypesEnum.Record) {
+            return isLabeledSubtype(a, b, context);
+        } else if (type == TypesEnum.Variant) {
+            return isLabeledSubtype(b, a, context);
+        } else {
+            if (a.size() == 1 && b.size() >= 1) {
+                for (String label : a.keySet()) {
+                    if (!b.containsKey(label))
+                        ExceptionsUtils.throwUnexpectedSizeException(context, a.size(), b.size()); // Add new exception
+
+                    return equals(a.get(label), b.get(label), context);
+                }
+            }
+
+            if (b.size() == 1 && a.size() >= 1) {
+                for (String label : b.keySet()) {
+                    if (!a.containsKey(label))
+                        ExceptionsUtils.throwUnexpectedSizeException(context, a.size(), b.size()); // Add new exception
+
+                    return equals(a.get(label), b.get(label), context);
+                }
+            }
+
+            if (a.size() == b.size()) {
+                boolean labelsResult = a.keySet().equals(b.keySet());
+
+                if (!labelsResult)
                     ExceptionsUtils.throwUnexpectedSizeException(context, a.size(), b.size()); // Add new exception
 
-                return equals(a.get(label), b.get(label), context);
+                for (String label : a.keySet()) {
+                    labelsResult &=  equals(a.get(label), b.get(label), context);
+                }
+
+                return labelsResult;
             }
         }
 
-        if (b.size() == 1 && a.size() >= 1) {
-            for (String label : b.keySet()) {
-                if (!a.containsKey(label))
-                    ExceptionsUtils.throwUnexpectedSizeException(context, a.size(), b.size()); // Add new exception
+        ExceptionsUtils.throwUnexpectedSizeException(context, a.size(), b.size()); // Add new exception
 
-                return equals(a.get(label), b.get(label), context);
-            }
-        }
+        return false;
+    }
 
-        if (a.size() == b.size()) {
-            boolean labelsResult = a.keySet().equals(b.keySet());
-
-            if (!labelsResult)
-                ExceptionsUtils.throwUnexpectedSizeException(context, a.size(), b.size()); // Add new exception
+    private boolean isLabeledSubtype(Map<String, DefinedType> a, Map<String, DefinedType> b, String context) {
+        if (a.keySet().size() <= b.keySet().size()) {
+            boolean labelsResult = true;
 
             for (String label : a.keySet()) {
+                if (!b.containsKey(label)) {
+                    return false;
+                }
                 labelsResult &=  equals(a.get(label), b.get(label), context);
             }
 
             return labelsResult;
         }
-
-        ExceptionsUtils.throwUnexpectedSizeException(context, a.size(), b.size()); // Add new exception
 
         return false;
     }

@@ -19,6 +19,7 @@
 - #sequencing
 - #references
 - #panic
+- #structural-subtyping
 
 Template for an implementation of [Stella](https://fizruk.github.io/stella/) in Java.
 

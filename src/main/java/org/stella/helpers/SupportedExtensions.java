@@ -22,7 +22,8 @@ public class SupportedExtensions {
             "#nested-function-declarations",
             "#sequencing",
             "#references",
-            "#panic"
+            "#panic",
+            "#structural-subtyping"
     );
 
     public static void Support(String extensionName){
