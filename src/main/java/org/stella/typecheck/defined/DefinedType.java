@@ -109,61 +109,37 @@ public class DefinedType {
         if (a == b || a.equals(b))
             return true;
 
-        if (type == TypesEnum.Record) {
-            return isLabeledSubtype(a, b, context);
-        } else if (type == TypesEnum.Variant) {
-            return isLabeledSubtype(b, a, context);
-        } else {
-            if (a.size() == 1 && b.size() >= 1) {
-                for (String label : a.keySet()) {
-                    if (!b.containsKey(label))
-                        ExceptionsUtils.throwUnexpectedSizeException(context, a.size(), b.size()); // Add new exception
-
-                    return equals(a.get(label), b.get(label), context);
-                }
+        switch (type) {
+            case Record -> {
+                return isLabeledSubtype(a, b, context, false);
             }
-
-            if (b.size() == 1 && a.size() >= 1) {
-                for (String label : b.keySet()) {
-                    if (!a.containsKey(label))
-                        ExceptionsUtils.throwUnexpectedSizeException(context, a.size(), b.size()); // Add new exception
-
-                    return equals(a.get(label), b.get(label), context);
-                }
-            }
-
-            if (a.size() == b.size()) {
-                boolean labelsResult = a.keySet().equals(b.keySet());
-
-                if (!labelsResult)
-                    ExceptionsUtils.throwUnexpectedSizeException(context, a.size(), b.size()); // Add new exception
-
-                for (String label : a.keySet()) {
-                    labelsResult &=  equals(a.get(label), b.get(label), context);
-                }
-
-                return labelsResult;
+            case Variant, Sum -> {
+                return isLabeledSubtype(b, a, context, true);
             }
         }
 
-        ExceptionsUtils.throwUnexpectedSizeException(context, a.size(), b.size()); // Add new exception
+        ExceptionsUtils.throwTypeException(context, "Record/Variant/Sum", type.name()); // Add new exception
 
         return false;
     }
 
-    private boolean isLabeledSubtype(Map<String, DefinedType> a, Map<String, DefinedType> b, String context) {
+    private boolean isLabeledSubtype(Map<String, DefinedType> a, Map<String, DefinedType> b, String context, boolean reverse) {
         if (a.keySet().size() <= b.keySet().size()) {
             boolean labelsResult = true;
 
             for (String label : a.keySet()) {
-                if (!b.containsKey(label)) {
-                    return false;
-                }
-                labelsResult &=  equals(a.get(label), b.get(label), context);
+                if (!b.containsKey(label))
+                    ExceptionsUtils.throwKeyDoesNotExistException(context, label);
+
+                labelsResult &= reverse
+                        ? equals(b.get(label), a.get(label), context)
+                        : equals(a.get(label), b.get(label), context);
             }
 
             return labelsResult;
         }
+
+        ExceptionsUtils.throwUnexpectedSizeException(context, a.size(), b.size()); // Add new exception
 
         return false;
     }
