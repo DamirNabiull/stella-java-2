@@ -23,7 +23,9 @@ public class SupportedExtensions {
             "#sequencing",
             "#references",
             "#panic",
-            "#structural-subtyping"
+            "#structural-subtyping",
+            "#top-type",
+            "#bottom-type"
     );
 
     public static void Support(String extensionName){

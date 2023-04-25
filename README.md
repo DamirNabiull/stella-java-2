@@ -20,6 +20,8 @@
 - #references
 - #panic
 - #structural-subtyping
+- #top-type
+- #bottom-type
 
 Template for an implementation of [Stella](https://fizruk.github.io/stella/) in Java.
 

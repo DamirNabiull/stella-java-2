@@ -221,10 +221,10 @@ public class VisitTypeCheck
             return new UnitDefined();
         }
         public DefinedType visit(TypeTop p, Context arg) {
-            return null;
+            return new TopDefined();
         }
         public DefinedType visit(TypeBottom p, Context arg) {
-            return null;
+            return new BotDefined();
         }
         public DefinedType visit(TypeRef p, Context arg) {
             RefDefined refType = new RefDefined();

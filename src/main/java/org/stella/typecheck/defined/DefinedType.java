@@ -79,6 +79,11 @@ public class DefinedType {
             return true;
         }
 
+        if (a.type == TypesEnum.Top || b.type == TypesEnum.Bot)
+        {
+            return true;
+        }
+
         String aType = a.type == null ? "NULL" : a.toString();
         String bType = b.type == null ? "NULL" : b.toString();
 
