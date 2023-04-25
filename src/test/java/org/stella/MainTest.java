@@ -30,7 +30,16 @@ class MainTest {
             "tests/records/well-typed/records-1.stella",
             "tests/my-well-typed/fix.stella",
             "tests/my-well-typed/general-recursion.stella",
-            "tests/my-well-typed/structure-patterns.stella"})
+            "tests/my-well-typed/structure-patterns.stella",
+            "tests/subtyping/well-typed/subtyping-1.stella",
+            "tests/subtyping/well-typed/subtyping-3.stella",
+//"tests/subtyping/well-typed/subtyping-7.stella",
+            "tests/subtyping/well-typed/subtyping-5.stella",
+            "tests/subtyping/well-typed/subtyping-2.stella",
+            "tests/subtyping/well-typed/subtyping-6.stella",
+            "tests/subtyping/well-typed/subtyping-4.stella",
+//"tests/subtyping/well-typed/subtyping-8.stella"
+    })
     public void testWellTyped(String filepath) throws IOException, Exception {
         String[] args = new String[0];
         final InputStream original = System.in;
@@ -66,7 +75,13 @@ class MainTest {
             "tests/records/ill-typed/bad-records-1.stella",
             "tests/my-ill-typed/fix.stella",
             "tests/my-ill-typed/general-recursion.stella",
-            "tests/my-ill-typed/structure-patterns.stella"})
+            "tests/my-ill-typed/structure-patterns.stella",
+            "tests/subtyping/ill-typed/bad-subtyping-1.stella",
+            "tests/subtyping/ill-typed/bad-subtyping-2.stella",
+            "tests/subtyping/ill-typed/bad-subtyping-3.stella",
+//"tests/subtyping/ill-typed/bad-subtyping-4.stella",
+//"tests/subtyping/ill-typed/bad-subtyping-5.stella"
+    })
     public void testIllTyped(String filepath) throws IOException, Exception {
         String[] args = new String[0];
         final InputStream original = System.in;
